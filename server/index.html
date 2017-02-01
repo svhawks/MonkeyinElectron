@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Mie Script Editor</title>
+  <link rel="stylesheet" href="public/css/style.css" media="screen">
+</head>
+<body>
+
+<pre id="editor">
+// ==UserScript==
+// @name         New Userscript
+// @namespace    http://google.com
+// @version      1.0.0
+// @description  try to take over the world!
+// @author       You
+// @match        https://www.google.com.tr
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+     console.log(1);
+    // Your code here...
+})();
+</pre>
+
+  <script src="public/ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="public/ace/src-noconflict/ext-language_tools.js"></script>
+  <script src="public/js/beautify.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="public/js/jquery.min.js"></script>
+  <script src="public/js/app.js"></script>
+</body>
+</html>

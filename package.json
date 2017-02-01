@@ -1,0 +1,40 @@
+{
+  "name": "mie",
+  "productName": "Mie",
+  "version": "1.5.1",
+  "electronVersion": "1.4.12",
+  "main": "main.build.js",
+  "dependencies": {
+    "3x3c": "^1.0.2",
+    "async": "^2.1.4",
+    "dexie": "^1.2.0",
+    "dragula": "^3.6.2",
+    "electron": "^1.4.15",
+    "express": "^4.14.0",
+    "jquery": "^3.1.1",
+    "mousetrap": "^1.5.3",
+    "nlp_compromise": "^1.1.5",
+    "node-notifier": "^4.6.1",
+    "nodemon": "^1.11.0",
+    "parse-tampermonkey-script": "^1.0.2",
+    "pm2": "^2.3.0",
+    "slug": "^0.9.1",
+    "socket.io": "^1.7.2",
+    "string_score": "^0.1.22",
+    "url-parse": "^1.1.7"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-electron": "^5.0.0",
+    "grunt-electron-installer-debian": "^0.4.0",
+    "standard": "^7.1.0"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "node_modules/.bin/standard --verbose js/**/*.js main/*.js",
+    "updateFilters": "node ./ext/filterLists/updateEasylist.js"
+  }
+}
