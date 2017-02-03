@@ -73,13 +73,22 @@ function runEditor() {
       editor.setValue(val);
     }
 
+    var renderer = electron.ipcRenderer
 
+    socket.on('connect', function(){
+      console.log("Socket connected");
+    });
+    socket.on('event', function(data){
+      console.log(data);
+    });
+    socket.on('disconnect', function(){
+      console.log("Socket disconnected");
+    });
 
-    ipc.on('url', function(event, arg) {
-      console.log(JSON.stringify(arg));
+    socket.on('url', function(arg) {
+      // alert(JSON.stringify(arg))
       if (arg.status) {
         editor.setValue(arg.response.script.trim())
-        console.log(res);
       } else {
         // console.log(':)');
       }
