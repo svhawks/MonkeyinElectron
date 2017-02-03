@@ -1,9 +1,7 @@
 
-
 document.addEventListener('DOMContentLoaded', runEditor);
 
 function runEditor() {
-
 
   if (window.location.href.indexOf("file://") === 0 ) {
 
@@ -19,23 +17,16 @@ function runEditor() {
         enableLiveAutocompletion: false
     });
 
-    // Save
-    editor.commands.addCommand({
-        name: 'save',
-        bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
-        exec: function(editor) {
-            // console.log("saving", editor.session.getValue())
-            console.log("Save your code");
-            if (isValidJS()) {
-              lint()
-              ipc.send('saveScript', editor.getValue());
-            } else {
-              console.log("Js is not correct.");
-            }
+    function saveScript(callback) {
+      if (isValidJS()) {
+        lint()
+        ipc.send('saveScript', editor.getValue());
+        callback("Saved!")
+      } else {
+        callback("Isn't saved because js is not correct")
+      }
+    }
 
-        }
-    })
-    // Shortcuts
     editor.commands.addCommand({
         name: "showKeyboardShortcuts",
         bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
@@ -46,7 +37,54 @@ function runEditor() {
             })
         }
     })
-    editor.execCommand("showKeyboardShortcuts")
+
+    editor.execCommand("showKeyboardShortcuts");
+
+    var delay = (function(){
+      var timer = 0;
+      return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+      };
+    })();
+
+  editor.commands.addCommand({
+      name: 'save',
+      bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+      exec: function(editor) {
+          saveScript(function(res) {
+            console.log(res);
+          })
+      }
+  })
+
+
+  settings.get('autoSave', function (isAutoSaveEnabled) {
+
+    if (isAutoSaveEnabled) {
+
+      editor.on("change", function(e) {
+
+         if (editor.curOp && editor.curOp.command.name) {
+
+           delay(function(){
+             saveScript(function(res) {
+               console.log(res);
+             })
+           }, 5000 );
+
+         }
+
+       });
+
+    } else {
+      notifier.notify({
+        'title': 'Monkey in Electron!',
+        'message': 'Auto save isn\'t enabled..'
+      });
+    }
+
+  });
 
     // For embed
     // editor.setAutoScrollEditorIntoView(true);
@@ -73,17 +111,6 @@ function runEditor() {
       editor.setValue(val);
     }
 
-    var renderer = electron.ipcRenderer
-
-    socket.on('connect', function(){
-      console.log("Socket connected");
-    });
-    socket.on('event', function(data){
-      console.log(data);
-    });
-    socket.on('disconnect', function(){
-      console.log("Socket disconnected");
-    });
 
     socket.on('url', function(arg) {
       // alert(JSON.stringify(arg))
@@ -93,10 +120,5 @@ function runEditor() {
         // console.log(':)');
       }
     })
-
-
-
   }
-
-
 }

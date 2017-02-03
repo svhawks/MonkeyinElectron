@@ -2,7 +2,7 @@
 var E = require('3x3c');
 var async = require('async');
 
-var PATH = `${__dirname}/ext/mie/config.json`;
+var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
 var slug = require('slug')
 
@@ -50,6 +50,7 @@ function deleteScript(name) {
             data.sites.forEach((site, key) => {
               if (site.name === name) {
                 delete data.sites[key];
+                fs.unlinkSync(site.path);
                 data.sites = data.sites.filter(n => true)
                 fs.writeFile(PATH, JSON.stringify(data), function(err) { // write file
                     if (err) { // if error, report
@@ -92,7 +93,7 @@ function list(name) {
 function save(obj) {
   //name, code
   return new Promise(function(resolve, reject) {
-    var SAVEPATH = `${__dirname}/ext/mie/scripts/${obj.name}`;
+    var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${obj.name}`;
 
     fs.writeFile(SAVEPATH, obj.code, function(err) { // write file
         if (err) { // if error, report
@@ -102,10 +103,10 @@ function save(obj) {
             });
             reject (err);
         }
-        notifier.notify({
-          'title': 'Monkey in Electron!',
-          'message': 'Script saved..'
-        });
+        // notifier.notify({
+        //   'title': 'Monkey in Electron!',
+        //   'message': 'Script saved..'
+        // });
         resolve('Script saved..');
     });
   });
@@ -135,7 +136,7 @@ function find(url) {
 function readExecutable(hash) {
   console.log("Okumaya geldi", hash);
   return new Promise(function(resolve, reject) {
-    var HASHPATH = `${__dirname}/ext/mie/script/${hash}`;
+    var HASHPATH = `${process.env["HOME"]}/.mie/script/${hash}`;
 
     fs.readFile(HASHPATH, 'utf8', function(err, data) { // read file to memory
       if (err) {
@@ -149,7 +150,7 @@ function readExecutable(hash) {
 
 function readOrigin (name) {
   return new Promise(function(resolve, reject) {
-    var SAVEPATH = `${__dirname}/ext/mie/scripts/${name}`;
+    var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${name}`;
     fs.readFile(SAVEPATH, 'utf8', function(err, data) { // read file to memory
       if (err) {
         reject(err);

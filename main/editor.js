@@ -5,10 +5,21 @@ var io = require('socket.io')();
 io.on('connection', function(client){});
 const parseTampermonkeyScript = require('parse-tampermonkey-script');
 // Check url
+var E = require("3x3c");
+
+E('./init.sh')
+  .then(value => console.log(value))
+  .catch(err => console.log(err))
+
+var EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html';
+var LAST_URL = '';
 
 io.on('connection', function(socket){
   ipcMain.on('checkUrl', (event, url) => {
-    // console.log(url);
+
+    if (url !== EDITOR_URL) {
+      LAST_URL = url;
+    }
 
     find(url)
       .then((site) => {
@@ -41,10 +52,10 @@ io.on('connection', function(socket){
     console.log('Save script..', script);
 
     var random = `${Math.floor(Math.random() * (90000000 - 10000000) + 10000000)}.js`;
-    parseTampermonkeyScript(script, `${__dirname}/ext/mie/script/${random}`)
+    parseTampermonkeyScript(script, `${process.env["HOME"]}/.mie/script/${random}`)
       .then((output) => {
         var name = slug(output.name) + '.js';
-        var path = `${__dirname}/ext/mie/scripts/${name}`;
+        var path = `${process.env["HOME"]}/.mie/scripts/${name}`;
         console.log(output);
         var obj = {
           name: name,

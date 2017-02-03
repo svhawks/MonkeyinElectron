@@ -1,5 +1,6 @@
 var container = document.getElementById("privacy-settings-container");
 var trackerCheckbox = document.getElementById("checkbox-block-trackers");
+var autoSaveCheckbox = document.getElementById("checkbox-auto-save");
 var banner = document.getElementById("restart-required-banner");
 var darkModeCheckbox = document.getElementById("checkbox-dark-mode");
 
@@ -51,7 +52,7 @@ function onKeyMapChange(e) {
 		if(!keyMapSettings) {
 			keyMapSettings = {}
 		}
-		
+
 		keyMapSettings[action] = parseKeyInput(newValue);
 		settings.set('keyMap', keyMapSettings, function () {
 			showRestartRequiredBanner()
@@ -150,6 +151,15 @@ settings.get('darkMode', function (value) {
 darkModeCheckbox.addEventListener("change", function (e) {
 	settings.set("darkMode", this.checked)
 	showRestartRequiredBanner()
+});
+
+// Auto Run Settings
+settings.get('autoSave', function (value) {
+	autoSaveCheckbox.checked = value;
+});
+
+autoSaveCheckbox.addEventListener("change", function (e) {
+	settings.set("autoSave", this.checked)
 });
 
 /* default search engine setting */
