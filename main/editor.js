@@ -85,4 +85,14 @@ io.on('connection', function(socket){
 
 });
 
-io.listen(40000);
+
+try {
+  io.listen(40000);
+} catch (e) {
+  console.log(e);
+}
+
+
+process.on('uncaughtException', function (err) {
+  console.log(err);
+})
