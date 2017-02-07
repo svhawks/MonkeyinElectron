@@ -103,7 +103,7 @@ module.exports = function (grunt) {
 		electron: {
 			osxBuild: {
 				options: {
-					name: 'Min',
+					name: 'Mie',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
 			},
 			windowsBuild: {
 				options: {
-					name: 'Min',
+					name: 'Mie',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -154,7 +154,7 @@ module.exports = function (grunt) {
 		},
 		'electron-installer-debian': {
 			options: {
-				productName: "Min",
+				productName: "Mie",
 				genericName: "Web Browser",
 				version: version,
 				section: "web",
@@ -162,8 +162,8 @@ module.exports = function (grunt) {
 				icon: "icons/icon256.png",
 				categories: ["Network", "WebBrowser"],
 				mimeType: ["x-scheme-handler/http", "x-scheme-handler/https", "text/html"],
-				maintainer: "Min Developers <280953907a@zoho.com>",
-				description: "Min is a faster, smarter web browser.",
+				maintainer: "Mie Developers <280953907a@zoho.com>",
+				description: "Mie is a faster, smarter web browser.",
 				depends: [
 				'gconf2',
 				'gconf-service',
@@ -184,14 +184,14 @@ module.exports = function (grunt) {
 				options: {
 					arch: 'i386'
 				},
-				src: 'dist/app/Min-linux-ia32',
+				src: 'dist/app/Mie-linux-ia32',
 				dest: 'dist/app/linux'
 			},
 			linux64: {
 				options: {
 					arch: 'amd64'
 				},
-				src: 'dist/app/Min-linux-x64',
+				src: 'dist/app/Mie-linux-x64',
 				dest: 'dist/app/linux'
 			}
 		}
