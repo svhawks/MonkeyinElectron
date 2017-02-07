@@ -75,7 +75,7 @@ function runEditor() {
       } else {
         notifier.notify({
           'title': 'Monkey in Electron!',
-          'message': 'Auto save isn\'t enabled..'
+          'message': 'You can active auto save in preferences.'
         });
       }
     });

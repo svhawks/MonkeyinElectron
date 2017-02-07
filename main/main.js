@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const app = electron.app // Module to control application life.
 const BrowserWindow = electron.BrowserWindow // Module to create native browser window.
+const {moveToApplications} = require('electron-lets-move');
 
 var userDataPath = app.getPath('userData')
 
@@ -158,6 +159,21 @@ app.on('window-all-closed', function () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
+
+  moveToApplications(function(err, moved) {
+    if (err) {
+      console.log(err);
+      // log error, something went wrong whilst moving the app.
+    }
+    if (!moved) {
+      // the user asked not to move the app, it's up to the parent application
+      // to store this information and not hassle them again.
+      console.log("Isnt moved.");
+    }
+
+    // do the rest of your application startup
+  });
+
   appIsReady = true
 
   createWindow(function () {
