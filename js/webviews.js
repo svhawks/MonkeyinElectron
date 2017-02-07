@@ -4,6 +4,7 @@ var phishingWarningPage = 'file://' + __dirname + '/pages/phishing/index.html' /
 var crashedWebviewPage = 'file:///' + __dirname + '/pages/crash/index.html'
 var errorPage = 'file:///' + __dirname + '/pages/error/index.html'
 var editorPage = 'file:///' + __dirname + '/pages/editor/index.html'
+var absoluteEditor = 'file://' + __dirname + '/pages/editor/index.html'
 
 var webviewBase = document.getElementById('webviews')
 var webviewEvents = []
@@ -11,13 +12,6 @@ var webviewIPC = []
 
 var electron = require('electron')
 var ipcRenderer = electron.ipcRenderer;
-
-// ipcRenderer.on('url', function(event, arg) {
-//   console.log(arg) // prints "pong"
-//   // alert(arg);
-// })
-//
-
 
 // this only affects newly created webviews, so all bindings should be done on startup
 
@@ -39,12 +33,11 @@ function bindWebviewIPC (name, fn) {
 
 // the permissionRequestHandler used for webviews
 function pagePermissionRequestHandler (webContents, permission, callback) {
-  callback(true);
-  // if (permission === 'notifications' || permission === 'fullscreen') {
-  //   callback(true)
-  // } else {
-  //   callback(false)
-  // }
+  if (permission === 'notifications' || permission === 'fullscreen') {
+    callback(true)
+  } else {
+    callback(false)
+  }
 }
 
 // called whenever the page url changes
@@ -52,6 +45,7 @@ function pagePermissionRequestHandler (webContents, permission, callback) {
 function onPageLoad (e) {
   var tab = this.getAttribute('data-tab')
   var url = this.getAttribute('src') // src attribute changes whenever a page is loaded
+
   if (url.indexOf('https://') === 0 || url.indexOf('about:') === 0 || url.indexOf('chrome:') === 0 || url.indexOf('file://') === 0) {
     tabs.update(tab, {
       secure: true,
@@ -63,26 +57,22 @@ function onPageLoad (e) {
       url: url
     })
   }
-  if (url.indexOf('file://') >= 0 && url.indexOf('editor/index.html') >= 0) {
-    console.log("Editor");
-  } else {
+
+  if (url !== absoluteEditor) {
     ipcRenderer.send('checkUrl', url)
+    var mieview = this;
+    ipcRenderer.on('url', function(event, arg) {
+      if (arg.status) {
+        var code = arg.response.executable.code;
+
+        if (arg.response.executable.enabled) {
+          mieview.executeJavaScript(code, false, function(value) {
+            console.log("Done!");
+          })
+        }
+      }
+    })
   }
-
-  var mieview = this;
-
-  ipcRenderer.on('url', function(event, arg) {
-    // alert(JSON.stringify(arg))
-    if (arg.status) {
-      console.log(arg);
-      var code = arg.response.executable;
-      // var code = 'try { document.getElementById("mieScript").remove(); } catch (e) { var head = document.getElementsByTagName("head")[0]; var script = document.createElement("script"); script.src ="'+arg.response.scriptUrl+'"; script.id = "mieScript"; script.onload = function() { console.log("Script initialized.."); }; head.appendChild(script); }';
-      mieview.executeJavaScript(code, false, function(value) {
-        console.log("Done!");
-      })
-    }
-  })
-
 
   rerenderTabElement(tab)
 }
@@ -107,9 +97,6 @@ remote.session.defaultSession.setPermissionRequestHandler(pagePermissionRequestH
 function getWebviewDom (options) {
   var w = document.createElement('webview')
   w.setAttribute('preload', 'dist/webview.min.js')
-  w.setAttribute('blinkfeatures', "PreciseMemoryInfo, CSSVariables, NotificationConstructor, NotificationBadge, NotificationInlineReplies, Notifications")
-
-  // allowpopups plugins blinkfeatures=
 
   if (options.url) {
     w.setAttribute('src', urlParser.parse(options.url))
@@ -148,7 +135,7 @@ function getWebviewDom (options) {
   w.addEventListener('page-title-set', function (e) {
     var tab = this.getAttribute('data-tab')
     tabs.update(tab, {
-      title: e.title + ' - Monkey!'
+      title: e.title
     })
     rerenderTabElement(tab)
   })
@@ -271,9 +258,11 @@ function switchToWebview (id) {
   if (!wv) {
     wv = addWebview(id)
   }
-
   var url = wv.src;
-  ipcRenderer.send('checkUrl', url)
+  if (url !== absoluteEditor) {
+    ipcRenderer.send('checkUrl', url);  //TODO: On switch true?
+    ipcRenderer.send('switchToWebview', url);  //TODO: On switch true?
+  }
   wv.classList.remove('hidden')
   wv.hidden = false
 }

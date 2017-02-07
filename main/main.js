@@ -20,7 +20,6 @@ var saveWindowBounds = function () {
 
 function sendIPCToWindow (window, action, data) {
   // if there are no windows, create a new one
-  console.log(action, data);
   if (!mainWindow) {
     createWindow(function () {
       mainWindow.webContents.send(action, data || {})
@@ -111,9 +110,9 @@ function createWindowWithBounds (bounds, shouldMaximize) {
       event.preventDefault()
       sendIPCToWindow(mainWindow, 'openPDF', {
         url: itemURL,
+        webContentsId: webContents.getId(),
         event: event,
         item: item, // as of electron 0.35.1, this is an empty object
-        webContents: webContents
       })
     }
     return true
@@ -401,20 +400,6 @@ function createAppMenu () {
           })(),
           click: function (item, window) {
             sendIPCToWindow(window, 'inspectPage')
-          }
-        },
-        {
-          label: 'Monkey Script Editor',
-          accelerator: (function () {
-            if (process.platform == 'darwin')
-              return 'Cmd+Alt+M'
-            else
-              return 'Ctrl+Shift+M'
-          })(),
-          click: function (item, window) {
-            sendIPCToWindow(window, 'addTab', {
-              url: 'file://' + __dirname + '/pages/editor/index.html'
-            })
           }
         }
       ]

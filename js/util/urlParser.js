@@ -26,7 +26,7 @@ var urlParser = {
     return url.indexOf('http://') === 0 || url.indexOf('https://') === 0 || url.indexOf('file://') === 0 || url.indexOf('about:') === 0 || url.indexOf('chrome:') === 0 || url.indexOf('data:') === 0
   },
   isSystemURL: function (url) {
-    return url.indexOf('chrome') === 0 || url.indexOf('about:') === 0 || url.indexOf('localhost:9090')
+    return url.indexOf('chrome') === 0 || url.indexOf('about:') === 0
   },
   removeProtocol: function (url) {
     if (!urlParser.isURL(url)) {
@@ -54,7 +54,6 @@ var urlParser = {
     if (!url) {
       return 'about:blank'
     }
-
     // if the url starts with a (supported) protocol, do nothing
     if (urlParser.isURL(url)) {
       return url

@@ -1,10 +1,8 @@
 // This module for read config.json.
-var E = require('3x3c');
 var async = require('async');
 
 var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
-var slug = require('slug')
 
 function insert(obj) {
   return new Promise(function(resolve, reject) {
@@ -12,20 +10,30 @@ function insert(obj) {
       if (!err) {
           try {
             data = JSON.parse(data);
+            console.log(data);
             data.sites.forEach((site, key) => {
-              if (site.name === obj.name && site.enabled && site.hash != obj.hash) {
-                // reject('Name is already declared');
-                notifier.notify({
-                  'title': 'Monkey in Electron!',
-                  'message': 'Override old version.'
-                });
-                site.enabled = false;
+              if (site.name === obj.name) {
+                const bothEnabled = site.enabled && obj.enabled;
+                const bothDisabled = !site.enabled && !obj.enabled;
+                if (!bothEnabled || !bothDisabled) {
+                  site.enabled = obj.enabled;
+                  const message = `Script ${obj.enabled ? 'enabled': 'disabled'}`
+                  delete data.sites[key];
+                  data.sites = data.sites.filter(n => true)
+                  notifier.notify({
+                    'title': 'Monkey in Electron!',
+                    'message': message
+                  });
+                } else {
+                  reject("Nothing to do.")
+                }
+
               }
             })
             data.sites.push(obj);
-            console.log(data);
-            fs.writeFile(PATH, JSON.stringify(data), function(err) { // write file
-                if (err) { // if error, report
+
+            fs.writeFile(PATH, JSON.stringify(data), function(err) {
+                if (err) {
                     reject (err);
                 }
                 resolve('Config updated.');
@@ -33,7 +41,6 @@ function insert(obj) {
           } catch (e) {
             reject(e);
           }
-
       } else {
         reject(err);
       }
@@ -91,22 +98,17 @@ function list(name) {
 }
 
 function save(obj) {
-  //name, code
   return new Promise(function(resolve, reject) {
     var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${obj.name}`;
 
-    fs.writeFile(SAVEPATH, obj.code, function(err) { // write file
-        if (err) { // if error, report
+    fs.writeFile(SAVEPATH, obj.code, function(err) {
+        if (err) {
             notifier.notify({
               'title': 'Monkey in Electron!',
               'message': 'Script doesn\'t saved :(..'
             });
             reject (err);
         }
-        // notifier.notify({
-        //   'title': 'Monkey in Electron!',
-        //   'message': 'Script saved..'
-        // });
         resolve('Script saved..');
     });
   });
@@ -121,7 +123,7 @@ function find(url) {
       try {
         data = JSON.parse(data.toString());
         data.sites.forEach((site, key) => {
-          if (site.match === url && site.enabled) {
+          if (site.match === url) {
             resolve(site)
           }
         })
@@ -132,21 +134,6 @@ function find(url) {
     });
   });
 }
-
-function readExecutable(hash) {
-  console.log("Okumaya geldi", hash);
-  return new Promise(function(resolve, reject) {
-    var HASHPATH = `${process.env["HOME"]}/.mie/script/${hash}`;
-
-    fs.readFile(HASHPATH, 'utf8', function(err, data) { // read file to memory
-      if (err) {
-        reject(err);
-      }
-      resolve(data)
-    });
-  });
-}
-
 
 function readOrigin (name) {
   return new Promise(function(resolve, reject) {

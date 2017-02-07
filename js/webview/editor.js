@@ -1,9 +1,10 @@
 
+
 document.addEventListener('DOMContentLoaded', runEditor);
 
 function runEditor() {
 
-  if (window.location.href.indexOf("file://") === 0 ) {
+  if (window.location.href.indexOf("file://") === 0 && window.location.href.indexOf("pages/editor/index.html")) {
 
     ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor"); // get reference to editor
@@ -20,7 +21,9 @@ function runEditor() {
     function saveScript(callback) {
       if (isValidJS()) {
         lint()
-        ipc.send('saveScript', editor.getValue());
+        delay(function(){
+          ipc.send('saveScript', editor.getValue());
+        }, 1000 );
         callback("Saved!")
       } else {
         callback("Isn't saved because js is not correct")
@@ -48,48 +51,37 @@ function runEditor() {
       };
     })();
 
-  editor.commands.addCommand({
-      name: 'save',
-      bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
-      exec: function(editor) {
-          saveScript(function(res) {
-            console.log(res);
-          })
+    editor.commands.addCommand({
+        name: 'save',
+        bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
+        exec: function(editor) {
+            saveScript(function(res) {
+              console.log(res);
+            })
+        }
+    })
+
+    settings.get('autoSave', function (isAutoSaveEnabled) {
+      if (isAutoSaveEnabled) {
+        editor.on("change", function(e) {
+           if (editor.curOp && editor.curOp.command.name) {
+             delay(function(){
+               saveScript(function(res) {
+                 console.log(res);
+               })
+             }, 5000 );
+           }
+         });
+      } else {
+        notifier.notify({
+          'title': 'Monkey in Electron!',
+          'message': 'Auto save isn\'t enabled..'
+        });
       }
-  })
-
-
-  settings.get('autoSave', function (isAutoSaveEnabled) {
-
-    if (isAutoSaveEnabled) {
-
-      editor.on("change", function(e) {
-
-         if (editor.curOp && editor.curOp.command.name) {
-
-           delay(function(){
-             saveScript(function(res) {
-               console.log(res);
-             })
-           }, 5000 );
-
-         }
-
-       });
-
-    } else {
-      notifier.notify({
-        'title': 'Monkey in Electron!',
-        'message': 'Auto save isn\'t enabled..'
-      });
-    }
-
-  });
-
+    });
     // For embed
     // editor.setAutoScrollEditorIntoView(true);
     // editor.setOption("maxLines", 30);
-
 
     function isValidJS() {
        try {
@@ -111,13 +103,10 @@ function runEditor() {
       editor.setValue(val);
     }
 
-
     socket.on('url', function(arg) {
-      // alert(JSON.stringify(arg))
+      console.log(arg);
       if (arg.status) {
         editor.setValue(arg.response.script.trim())
-      } else {
-        // console.log(':)');
       }
     })
   }

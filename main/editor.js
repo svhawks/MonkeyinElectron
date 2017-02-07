@@ -1,98 +1,95 @@
-var ipcMain = electron.ipcMain;
-var slug = require('slug')
-var URL = require('url-parse');
-var io = require('socket.io')();
-io.on('connection', function(client){});
-const parseTampermonkeyScript = require('parse-tampermonkey-script');
-// Check url
-var E = require("3x3c");
+const ipcMain = electron.ipcMain
+const slug = require('slug')
+const URL = require('url-parse')
+const io = require('socket.io')()
+io.on('connection', client => {})
+const parseTampermonkeyScript = require('parse-tampermonkey-script')
 
-E('./init.sh')
-  .then(value => console.log(value))
-  .catch(err => console.log(err))
+const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
+let LAST_URL = ''
 
-var EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html';
-var LAST_URL = '';
-
-io.on('connection', function(socket){
+io.on('connection', (socket) => {
+  ipcMain.on('switchToWebview', (event, url) => {
+    // console.log(url, LAST_URL);
+    LAST_URL = '';
+  })
   ipcMain.on('checkUrl', (event, url) => {
 
-    if (url !== EDITOR_URL) {
-      LAST_URL = url;
-    }
 
-    find(url)
-      .then((site) => {
-        // console.log(site);
-        readOrigin(site.name)
-          .then((script) => {
-            url = new URL(url);
-            // console.log(site.hash);
-            readExecutable(site.hash)
-              .then((executable) => {
 
-                event.sender.send('url', {status:true, site, response:{ script, executable }})
-                socket.emit('url', {status:true, site, response:{ script, executable }})
-              })
-              .catch((err) => {
-                // console.log(err);
-                event.sender.send('url', {status:false});
-                socket.emit('url', {status:false});
-              })
+      async.waterfall([
+      (callback) => {
+          find(url).then(site => callback(null, site));
+      },
+      (site, callback) => {
+          readOrigin(site.name).then(script => callback(null, script))
+      },
+      (originalScript, callback) => {
+          parseTampermonkeyScript(originalScript).then(executable => {
+            const response = {
+              script: originalScript,
+              executable
+            }
+            callback(null, response);
           })
-      })
-      .catch((err) => {
-        // console.log(err);
-        event.sender.send('url', {status:false});
-        socket.emit('url', {status:false});
-      })
+      }
+    ],  (err, response) => {
+        if (err) {
+          event.sender.send('url', {status:false, err})
+        }
+        if (LAST_URL !== url && url !== EDITOR_URL) {
+
+          LAST_URL = url
+          event.sender.send('url', {status:true, response})
+        } else {
+          socket.emit('url', {status:true, response})
+        }
+      });
+
   })
 
   ipcMain.on('saveScript', (event, script) => {
-    console.log('Save script..', script);
-
-    var random = `${Math.floor(Math.random() * (90000000 - 10000000) + 10000000)}.js`;
-    parseTampermonkeyScript(script, `${process.env["HOME"]}/.mie/script/${random}`)
-      .then((output) => {
-        var name = slug(output.name) + '.js';
-        var path = `${process.env["HOME"]}/.mie/scripts/${name}`;
-        console.log(output);
-        var obj = {
-          name: name,
-          path: path,
-          hash: random,
-          namespace: output.namespace,
-          match: output.match,
-          scripts: output.scripts,
-          enabled: true,
-          remote: false
-        }
-        insert(obj)
-          .then((response) => {
-            console.log(response);
-
-            save({name,code:script})
-              .then(() => {
-                console.log("Script saved..");
-              })
-              .catch((err) => {
-                console.log("Script doesn't saved", err);
-              })
-
-          })
-      })
-  })
-
-});
+      parseTampermonkeyScript(script)
+        .then((output) => {
+            const name = slug(output.name) + '.js'
+            const obj = {
+              name,
+              match: output.match,
+              scripts: output.scripts,
+              enabled: output.enabled
+            }
+            async.parallel([
+                (callback) => {
+                  save({name,code:script})
+                    .then(() => callback(null, "Script saved"))
+                    .catch((err) => callback(err, null))
+                },
+                (callback) => {
+                  insert(obj)
+                    .then(response => callback(null, response))
+                    .catch(err => callback(err, null))
+                }
+            ], (err, results) => {
+                if (err) {
+                  notifier.notify({
+                    'title': 'Monkey in Electron!',
+                    'message': JSON.stringify(err)
+                  })
+                }
+                console.log(results)
+            })
+        })
+    })
+})
 
 
 try {
-  io.listen(40000);
+  io.listen(40000)
 } catch (e) {
-  console.log(e);
+  console.log(e)
 }
 
 
-process.on('uncaughtException', function (err) {
-  console.log(err);
+process.on('uncaughtException', (err) => {
+  console.log(err)
 })

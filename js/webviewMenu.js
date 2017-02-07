@@ -138,21 +138,6 @@ var webviewMenu = {
       }
     }))
 
-    // menu.append(new MenuItem({
-    //   label: 'Mie Script',
-    //   click: function () {
-    //     var newTab = tabs.add({
-    //       url: "file://" + __dirname + '/ext/pages/editor/index.html?url=' + encodeURIComponent(webviewMenu.cache.webview.getURL()),
-    //       private: tab.private
-    //     })
-    //     addTab(newTab, {
-    //       enterEditMode: false
-    //     })
-    //
-    //     getWebview(newTab).focus()
-    //   }
-    // }))
-
     menu.popup(remote.getCurrentWindow())
   },
   /* cxevent: a contextmenu event. Can be a jquery event or a regular event. */

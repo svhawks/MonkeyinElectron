@@ -3,27 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Mie Script Editor</title>
+  <title>Mie Editor</title>
   <link rel="stylesheet" href="../../public/css/style.css" media="screen">
 </head>
 <body>
 
-<pre id="editor" onkeyup="editor()">
+<pre id="editor">
 // ==UserScript==
 // @name         New Userscript
-// @namespace    http://google.com
 // @version      1.0.0
 // @description  try to take over the world!
-// @author       You
-// @match        https://www.google.com.tr
-// @grant        none
+// @match        https://www.google.com
+// @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js
+// @enabled      true
 // ==/UserScript==
 
-(function() {
-    'use strict';
-     console.log(1);
-    // Your code here...
-})();
+$(function() {
+    alert("Mie!");
+});
 </pre>
 
   <script src="../../public/ace/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -33,6 +30,5 @@
   <script src="../../ext/Dexie.min.js"></script>
 	<script src="../../js/util/database.js"></script>
 	<script src="../../js/util/settings.js"></script>
-
 </body>
 </html>

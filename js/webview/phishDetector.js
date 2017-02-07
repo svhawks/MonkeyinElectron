@@ -10,9 +10,7 @@ function debugPhishing (msg) {
 
 var doubleDomainRegex = /\.(com|net|org|edu|gov|mil|uk|ca|jp|fr|au|us|ru|ch|it|nl|de|es)((\..*(com|net|org|edu|gov|mil))|(\..+(uk|ca|jp|fr|au|us|ru|ch|it|nl|de|es)))/g
 
-
 function checkPhishingStatus () {
-
   // if there isn't a password input or ßform, skip the phishing analysis, since this probably isn't a phish
   if (!document.querySelector('input[type=password], form')) {
     return false

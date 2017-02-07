@@ -1,6 +1,5 @@
 var container = document.getElementById("privacy-settings-container");
 var trackerCheckbox = document.getElementById("checkbox-block-trackers");
-var autoSaveCheckbox = document.getElementById("checkbox-auto-save");
 var banner = document.getElementById("restart-required-banner");
 var darkModeCheckbox = document.getElementById("checkbox-dark-mode");
 
@@ -153,7 +152,6 @@ darkModeCheckbox.addEventListener("change", function (e) {
 	showRestartRequiredBanner()
 });
 
-// Auto Run Settings
 settings.get('autoSave', function (value) {
 	autoSaveCheckbox.checked = value;
 });
@@ -161,6 +159,7 @@ settings.get('autoSave', function (value) {
 autoSaveCheckbox.addEventListener("change", function (e) {
 	settings.set("autoSave", this.checked)
 });
+
 
 /* default search engine setting */
 

@@ -28,10 +28,7 @@ function openURLInBackground (url) { // used to open a url in the background, wi
 function openURLFromsearchbar (event, url) {
 
   // TODO decide if this should go somewhere else
-  if (url == 'editor') {
-    navigate(tabs.getSelected(), 'http://localhost:9090');
-  }
-  
+
   // if the url is a !bang search
   if (url.indexOf('!') === 0) {
     var selectedBang = url.split(' ')[0]

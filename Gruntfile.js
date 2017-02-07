@@ -63,7 +63,7 @@ module.exports = function (grunt) {
 						"js/webview/swipeEvents.js",
 						"js/webview/zoom.js",
 						"js/webview/keywordExtractor.js",
-						"js/webview/editor.js",
+						"js/webview/editor.js"
 						 ],
 				dest: 'dist/webview.js'
 			},
@@ -73,6 +73,7 @@ module.exports = function (grunt) {
 					"main/filtering.js",
 					"main/editor.js",
 					"main/FileSystem.js",
+					"main/init.js"
 						 ],
 				dest: 'main.build.js'
 			}
@@ -102,7 +103,7 @@ module.exports = function (grunt) {
 		electron: {
 			osxBuild: {
 				options: {
-					name: 'Mie',
+					name: 'Min',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -124,7 +125,7 @@ module.exports = function (grunt) {
 			},
 			windowsBuild: {
 				options: {
-					name: 'Mie',
+					name: 'Min',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -138,7 +139,7 @@ module.exports = function (grunt) {
 			},
 			linuxBuild: {
 				options: {
-					name: 'mie',
+					name: 'min',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -153,7 +154,7 @@ module.exports = function (grunt) {
 		},
 		'electron-installer-debian': {
 			options: {
-				productName: "Mie",
+				productName: "Min",
 				genericName: "Web Browser",
 				version: version,
 				section: "web",
@@ -161,8 +162,8 @@ module.exports = function (grunt) {
 				icon: "icons/icon256.png",
 				categories: ["Network", "WebBrowser"],
 				mimeType: ["x-scheme-handler/http", "x-scheme-handler/https", "text/html"],
-				maintainer: "Mie Developers <cagataycali@icloud.com>",
-				description: "Mie is Min powered developer tool.",
+				maintainer: "Min Developers <280953907a@zoho.com>",
+				description: "Min is a faster, smarter web browser.",
 				depends: [
 				'gconf2',
 				'gconf-service',
