@@ -1,6 +1,7 @@
 // This module for read config.json.
 var async = require('async');
-
+var bugsnag = require("bugsnag");
+bugsnag.register("23bbc0b43951a81209436f177df8f52f");
 var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
 
@@ -34,14 +35,17 @@ function insert(obj) {
 
             fs.writeFile(PATH, JSON.stringify(data), function(err) {
                 if (err) {
+                    bugsnag.notify(new Error(err));
                     reject (err);
                 }
                 resolve('Config updated.');
             });
           } catch (e) {
+            bugsnag.notify(new Error(e));
             reject(e);
           }
       } else {
+        bugsnag.notify(new Error(err));
         reject(err);
       }
     });
@@ -61,6 +65,7 @@ function deleteScript(name) {
                 data.sites = data.sites.filter(n => true)
                 fs.writeFile(PATH, JSON.stringify(data), function(err) { // write file
                     if (err) { // if error, report
+                        bugsnag.notify(new Error(err));
                         reject (err);
                     }
                     resolve('Data removed from config.');
@@ -69,10 +74,12 @@ function deleteScript(name) {
             })
 
           } catch (e) {
+            bugsnag.notify(new Error(e));
             reject(e);
           }
 
       } else {
+        bugsnag.notify(new Error(err));
         reject(err);
       }
     });
@@ -87,10 +94,12 @@ function list(name) {
             data = JSON.parse(data.toString());
             resolve(data);
           } catch (e) {
+            bugsnag.notify(new Error(e));
             reject(e);
           }
 
       } else {
+        bugsnag.notify(new Error(err));
         reject(err);
       }
     });
@@ -105,8 +114,9 @@ function save(obj) {
         if (err) {
             notifier.notify({
               'title': 'Monkey in Electron!',
-              'message': 'Script doesn\'t saved :(..'
+              'message': `Error: ${err}`
             });
+            bugsnag.notify(new Error(err));
             reject (err);
         }
         resolve('Script saved..');
@@ -118,6 +128,7 @@ function find(url) {
   return new Promise(function(resolve, reject) {
     fs.readFile(PATH, 'utf8', function(err, data) { // read file to memory
       if (err) {
+        bugsnag.notify(new Error(err));
         reject(err);
       }
       try {
@@ -140,6 +151,7 @@ function readOrigin (name) {
     var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${name}`;
     fs.readFile(SAVEPATH, 'utf8', function(err, data) { // read file to memory
       if (err) {
+        bugsnag.notify(new Error(err));
         reject(err);
       }
       resolve(data)

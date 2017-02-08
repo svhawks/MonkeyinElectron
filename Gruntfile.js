@@ -110,7 +110,7 @@ module.exports = function (grunt) {
 					'app-version': version,
 					platform: 'darwin',
 					arch: 'x64',
-					icon: "icon.icns",
+					icon: "logo.icns",
 					ignore: 'dist/app',
 					prune: true,
 					overwrite: true,

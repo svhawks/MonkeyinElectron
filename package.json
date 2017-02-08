@@ -8,6 +8,7 @@
     "3x1st": "^1.0.3",
     "3x3c": "^1.0.2",
     "async": "^2.1.4",
+    "bugsnag": "^1.9.0",
     "dexie": "^1.5.1",
     "dragula": "^3.7.2",
     "electron-lets-move": "0.0.4",
