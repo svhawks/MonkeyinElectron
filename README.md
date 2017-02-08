@@ -1,8 +1,10 @@
-# Min
+<h1 align="center">
+<img src="logo.png">
+</h1>
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
-Min is a smarter, faster web browser. It includes features such as:
+Tamper Monkey in Steroids works in Electron, Min browser powered
 
 * Information from [DuckDuckGo](https://duckduckgo.com) in the searchbar.
 * Built-in ad and tracker blocking
@@ -11,7 +13,7 @@ Min is a smarter, faster web browser. It includes features such as:
 * Reading list
 * Tabs improvements (tabs open to the right, and fade out when inactive).
 
-More information, and prebuilt binaries, are available [here](https://minbrowser.github.io/min/).
+More information, and prebuilt binaries, are available [here](https://Miebrowser.github.io/Mie/).
 
 ## Screenshots
 
@@ -23,14 +25,14 @@ More information, and prebuilt binaries, are available [here](https://minbrowser
 
 ## Installing
 
-If you just want to run Min, you can download binaries [here](https://github.com/minbrowser/min/releases).
+If you just want to run Mie, you can download binaries [here](https://github.com/Miebrowser/Mie/releases).
 
-If you want to develop Min:
+If you want to develop Mie:
 
 * Install [Node](https://nodejs.org) and [Grunt](http://gruntjs.com).
 * Run `npm install`, then run `grunt`.
 * Download a copy of Electron from [here](https://github.com/electron/electron/releases).
-* Run `/Path/To/Electron /Path/To/Min`.
+* Run `/Path/To/Electron /Path/To/Mie`.
 
 ## Building Binaries
 

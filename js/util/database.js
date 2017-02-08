@@ -72,7 +72,6 @@ db.version(4).stores({
       })
     })
 
-    // remove the old history and bookmarks tables
 
   // t.bookmarks.toCollection().delete()
   // t.history.toCollection().delete()
