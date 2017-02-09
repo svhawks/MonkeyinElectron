@@ -6,8 +6,8 @@ var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
 
 function insert(obj) {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(PATH, 'utf8', function(err, data) { // read file to memory
+  return new Promise((resolve, reject) => {
+    fs.readFile(PATH, 'utf8', (err, data) => {
       if (!err) {
           try {
             data = JSON.parse(data);
@@ -21,10 +21,6 @@ function insert(obj) {
                   const message = `Script ${obj.enabled ? 'enabled': 'disabled'}`
                   delete data.sites[key];
                   data.sites = data.sites.filter(n => true)
-                  notifier.notify({
-                    'title': 'Monkey in Electron!',
-                    'message': message
-                  });
                 } else {
                   reject("Nothing to do.")
                 }
@@ -33,7 +29,7 @@ function insert(obj) {
             })
             data.sites.push(obj);
 
-            fs.writeFile(PATH, JSON.stringify(data), function(err) {
+            fs.writeFile(PATH, JSON.stringify(data), (err) => {
                 if (err) {
                     bugsnag.notify(new Error(err));
                     reject (err);
@@ -53,8 +49,8 @@ function insert(obj) {
 }
 
 function deleteScript(name) {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(PATH, 'utf8', function(err, data) { // read file to memory
+  return new Promise((resolve, reject) => {
+    fs.readFile(PATH, 'utf8', (err, data) => {
       if (!err) {
           try {
             data = JSON.parse(data.toString());
@@ -63,8 +59,8 @@ function deleteScript(name) {
                 delete data.sites[key];
                 fs.unlinkSync(site.path);
                 data.sites = data.sites.filter(n => true)
-                fs.writeFile(PATH, JSON.stringify(data), function(err) { // write file
-                    if (err) { // if error, report
+                fs.writeFile(PATH, JSON.stringify(data), (err) => {
+                    if (err) {
                         bugsnag.notify(new Error(err));
                         reject (err);
                     }
@@ -87,8 +83,8 @@ function deleteScript(name) {
 }
 
 function list(name) {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(PATH, 'utf8', function(err, data) { // read file to memory
+  return new Promise((resolve, reject) => {
+    fs.readFile(PATH, 'utf8', (err, data) => {
       if (!err) {
           try {
             data = JSON.parse(data.toString());
@@ -107,10 +103,10 @@ function list(name) {
 }
 
 function save(obj) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${obj.name}`;
 
-    fs.writeFile(SAVEPATH, obj.code, function(err) {
+    fs.writeFile(SAVEPATH, obj.code, (err) => {
         if (err) {
             notifier.notify({
               'title': 'Monkey in Electron!',
@@ -125,8 +121,8 @@ function save(obj) {
 }
 
 function find(url) {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(PATH, 'utf8', function(err, data) { // read file to memory
+  return new Promise((resolve, reject) => {
+    fs.readFile(PATH, 'utf8', (err, data) => {
       if (err) {
         bugsnag.notify(new Error(err));
         reject(err);
@@ -138,7 +134,7 @@ function find(url) {
             resolve(site)
           }
         })
-        reject('site not found'); // @TODO @cagatay IF WANT DONT DELETE UN SAVED THINGS..
+        reject('site not found');
       } catch (e) {
         reject('site not found');
       }
@@ -147,9 +143,9 @@ function find(url) {
 }
 
 function readOrigin (name) {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${name}`;
-    fs.readFile(SAVEPATH, 'utf8', function(err, data) { // read file to memory
+    fs.readFile(SAVEPATH, 'utf8', (err, data) => {
       if (err) {
         bugsnag.notify(new Error(err));
         reject(err);

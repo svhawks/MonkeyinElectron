@@ -23,9 +23,11 @@ function runEditor() {
         lint()
         delay(function(){
           ipc.send('saveScript', editor.getValue());
-        }, 1000 );
-        callback("Saved!")
+          console.log("Saved");
+          callback("Saved!")
+        }, 500 );
       } else {
+        console.log("Isn't saved because js is not correct");
         callback("Isn't saved because js is not correct")
       }
     }
@@ -69,7 +71,7 @@ function runEditor() {
                saveScript(function(res) {
                  console.log(res);
                })
-             }, 5000 );
+             }, 2000 );
            }
          });
       } else {

@@ -10,16 +10,14 @@ let LAST_URL = ''
 
 io.on('connection', (socket) => {
   ipcMain.on('switchToWebview', (event, url) => {
-    // console.log(url, LAST_URL);
     LAST_URL = '';
   })
   ipcMain.on('checkUrl', (event, url) => {
-
-
-
       async.waterfall([
       (callback) => {
-          find(url).then(site => callback(null, site));
+          find(url)
+            .then(site => callback(null, site))
+            .catch(err => callback(err, null))
       },
       (site, callback) => {
           readOrigin(site.name).then(script => callback(null, script))
@@ -38,7 +36,6 @@ io.on('connection', (socket) => {
           event.sender.send('url', {status:false, err})
         }
         if (LAST_URL !== url && url !== EDITOR_URL) {
-
           LAST_URL = url
           event.sender.send('url', {status:true, response})
         } else {
