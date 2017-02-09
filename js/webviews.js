@@ -260,9 +260,10 @@ function switchToWebview (id) {
   }
   var url = wv.src;
   if (url !== absoluteEditor) {
-    ipcRenderer.send('checkUrl', url);  //TODO: On switch true?
     ipcRenderer.send('switchToWebview', url);  //TODO: On switch true?
   }
+  ipcRenderer.send('checkUrl', url);  //TODO: On switch true?
+
   wv.classList.remove('hidden')
   wv.hidden = false
 }

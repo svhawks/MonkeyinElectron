@@ -22,7 +22,8 @@
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2",
     "string_score": "^0.1.22",
-    "url-parse": "^1.1.7"
+    "url-parse": "^1.1.7",
+    "url-steroids": "^1.0.1"
   },
   "devDependencies": {
     "grunt": "^1.0.1",

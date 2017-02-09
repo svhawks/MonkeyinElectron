@@ -106,9 +106,12 @@ function runEditor() {
     }
 
     socket.on('url', function(arg) {
-      console.log(arg);
       if (arg.status) {
         editor.setValue(arg.response.script.trim())
+      } else {
+        var defaultCode = ["// ==UserScript==", "// @name         " + arg.details.title + ' Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
+        defaultCode = defaultCode.join("\n");
+        editor.setValue(defaultCode);
       }
     })
   }

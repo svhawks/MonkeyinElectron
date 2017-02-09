@@ -1,6 +1,7 @@
 const ipcMain = electron.ipcMain
 const slug = require('slug')
 const URL = require('url-parse')
+const urlSteroids = require('url-steroids');
 const io = require('socket.io')()
 io.on('connection', client => {})
 const parseTampermonkeyScript = require('parse-tampermonkey-script')
@@ -13,36 +14,44 @@ io.on('connection', (socket) => {
     LAST_URL = '';
   })
   ipcMain.on('checkUrl', (event, url) => {
-      async.waterfall([
-      (callback) => {
-          find(url)
-            .then(site => callback(null, site))
-            .catch(err => callback(err, null))
-      },
-      (site, callback) => {
-          readOrigin(site.name).then(script => callback(null, script))
-      },
-      (originalScript, callback) => {
-          parseTampermonkeyScript(originalScript).then(executable => {
-            const response = {
-              script: originalScript,
-              executable
-            }
-            callback(null, response);
-          })
-      }
-    ],  (err, response) => {
-        if (err) {
-          event.sender.send('url', {status:false, err})
-        }
-        if (LAST_URL !== url && url !== EDITOR_URL) {
-          LAST_URL = url
-          event.sender.send('url', {status:true, response})
-        } else {
-          socket.emit('url', {status:true, response})
-        }
-      });
+    console.log('Current URL ', url);
 
+    if (LAST_URL !== url && url !== EDITOR_URL) {
+        LAST_URL = url
+
+        async.waterfall([
+        (callback) => {
+            find(LAST_URL)
+              .then(site => callback(null, site))
+              .catch(err => callback(err, null))
+        },
+        (site, callback) => {
+            readOrigin(site.name).then(script => callback(null, script))
+        },
+        (originalScript, callback) => {
+            parseTampermonkeyScript(originalScript).then(executable => {
+              const response = {
+                script: originalScript,
+                executable
+              }
+              callback(null, response);
+            })
+        }
+      ],  (err, response) => {
+          if (err) {
+            console.log('err' ,err);
+            urlSteroids.parse(LAST_URL)
+              .then((out) => {
+                socket.emit('url', {status:false, url:LAST_URL, details:out})
+              })
+            event.sender.send('url', {status:false, err})
+          }
+          if (url !== EDITOR_URL) {
+            event.sender.send('url', {status:true, response})
+          }
+          socket.emit('url', {status:true, response})
+        });
+    }
   })
 
   ipcMain.on('saveScript', (event, script) => {
