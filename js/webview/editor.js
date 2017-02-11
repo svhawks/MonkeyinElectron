@@ -109,9 +109,23 @@ function runEditor() {
       if (arg.status) {
         editor.setValue(arg.response.script.trim())
       } else {
-        var defaultCode = ["// ==UserScript==", "// @name         " + arg.details.title + ' Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
+        // alert(arg)
+        var defaultCode = ["// ==UserScript==", "// @name         " + arg.details + ' Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
         defaultCode = defaultCode.join("\n");
         editor.setValue(defaultCode);
+      }
+    })
+  } else {
+    socket.on('url', function(arg) {
+      console.log("There isnt any script yet," + window.location.href);
+      if (arg.status) {
+        var code = arg.response.executable.code;
+        console.log(arg);
+        if (arg.executable.enabled) {
+          eval(code);
+        } else {
+          console.log("There is a executable script but does not enabled.");
+        }
       }
     })
   }

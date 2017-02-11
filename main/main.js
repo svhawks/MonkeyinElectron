@@ -160,19 +160,19 @@ app.on('window-all-closed', function () {
 // initialization and is ready to create browser windows.
 app.on('ready', function () {
 
-  moveToApplications(function(err, moved) {
-    if (err) {
-      console.log(err);
-      // log error, something went wrong whilst moving the app.
-    }
-    if (!moved) {
-      // the user asked not to move the app, it's up to the parent application
-      // to store this information and not hassle them again.
-      console.log("Isnt moved.");
-    }
-
-    // do the rest of your application startup
-  });
+  // moveToApplications(function(err, moved) {
+  //   if (err) {
+  //     console.log(err);
+  //     // log error, something went wrong whilst moving the app.
+  //   }
+  //   if (!moved) {
+  //     // the user asked not to move the app, it's up to the parent application
+  //     // to store this information and not hassle them again.
+  //     console.log("Isnt moved.");
+  //   }
+  //
+  //   // do the rest of your application startup
+  // });
 
   appIsReady = true
 

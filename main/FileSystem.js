@@ -4,7 +4,7 @@ var bugsnag = require("bugsnag");
 bugsnag.register("23bbc0b43951a81209436f177df8f52f");
 var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
-
+// const urlSteroids = require('url-steroids');
 function insert(obj) {
   return new Promise((resolve, reject) => {
     fs.readFile(PATH, 'utf8', (err, data) => {
@@ -120,6 +120,18 @@ function save(obj) {
   });
 }
 
+function match(data, url) {
+  return new Promise((resolve, reject) => {
+    data = JSON.parse(data.toString());
+    data.sites.forEach((site, key) => {
+      urlSteroids.match(site.match, url)
+        .then(() => {
+          resolve(site)
+        })
+    })
+  });
+}
+
 function find(url) {
   return new Promise((resolve, reject) => {
     fs.readFile(PATH, 'utf8', (err, data) => {
@@ -127,17 +139,11 @@ function find(url) {
         bugsnag.notify(new Error(err));
         reject(err);
       }
-      try {
-        data = JSON.parse(data.toString());
-        data.sites.forEach((site, key) => {
-          if (site.match === url) {
-            resolve(site)
-          }
-        })
-        reject('site not found');
-      } catch (e) {
-        reject('site not found');
-      }
+      match(data, url)
+        .then(site => resolve(site))
+      setTimeout(function () {
+        reject("Site not found.")
+      }, 2000);
     });
   });
 }

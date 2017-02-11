@@ -2,6 +2,8 @@
 
 var trailingSlashRegex = /\/$/g
 var plusRegex = /\+/g
+var electron = require('electron')
+var ipcRenderer = electron.ipcRenderer;
 
 function removeTags (text) {
   return text.replace(/<.*?>/g, '')
@@ -335,6 +337,10 @@ searchbar.addEventListener('keydown', function (e) {
 })
 
 // when we get keywords data from the page, we show those results in the searchbar
+
+function getWebview (id) {
+  return document.querySelector('webview[data-tab="{id}"]'.replace('{id}', id))
+}
 
 bindWebviewIPC('keywordsData', function (webview, tabId, arguements) {
   var data = arguements[0]

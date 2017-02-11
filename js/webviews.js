@@ -13,16 +13,12 @@ var webviewIPC = []
 var electron = require('electron')
 var ipcRenderer = electron.ipcRenderer;
 
-// this only affects newly created webviews, so all bindings should be done on startup
-
 function bindWebviewEvent (event, fn) {
   webviewEvents.push({
     event: event,
     fn: fn
   })
 }
-
-// function is called with (webview, tabId, IPCArguements)
 
 function bindWebviewIPC (name, fn) {
   webviewIPC.push({
@@ -31,7 +27,6 @@ function bindWebviewIPC (name, fn) {
   })
 }
 
-// the permissionRequestHandler used for webviews
 function pagePermissionRequestHandler (webContents, permission, callback) {
   if (permission === 'notifications' || permission === 'fullscreen') {
     callback(true)
@@ -39,8 +34,6 @@ function pagePermissionRequestHandler (webContents, permission, callback) {
     callback(false)
   }
 }
-
-// called whenever the page url changes
 
 function onPageLoad (e) {
   var tab = this.getAttribute('data-tab')
@@ -58,26 +51,36 @@ function onPageLoad (e) {
     })
   }
 
-  if (url !== absoluteEditor) {
-    ipcRenderer.send('checkUrl', url)
-    var mieview = this;
-    ipcRenderer.on('url', function(event, arg) {
-      if (arg.status) {
-        var code = arg.response.executable.code;
 
-        if (arg.response.executable.enabled) {
-          mieview.executeJavaScript(code, false, function(value) {
-            console.log("Done!");
-          })
-        }
-      }
-    })
-  }
+  ipcRenderer.send('checkUrl', url);
+
+  // var LAST_MATCH = '';
+  // var mieview = this;
+  // ipcRenderer.on('url', function(event, arg) {
+  //   console.log( arg );
+  //   if (arg.status) {
+  //     var code = arg.response.executable.code;
+  //
+  //     if (arg.response.executable.enabled) {
+  //       if (LAST_MATCH === arg.response.executable.match) {
+  //         ipcRenderer.send('browserLog', 'Same script handled.');
+  //         LAST_MATCH = '';
+  //       } else {
+  //         LAST_MATCH = arg.response.executable.match;
+  //         ipcRenderer.send('browserLog', 'Executable script handled.' + JSON.stringify(arg.response.executable.match))
+  //       }
+  //
+  //       // mieview.executeJavaScript(code, false, function(value) {
+  //       //   console.log("Done!");
+  //       // })
+  //     }
+  //   }
+  // })
+
 
   rerenderTabElement(tab)
 }
 
-// called when js/webview/textExtractor.js returns the page's text content
 bindWebviewIPC('pageData', function (webview, tabId, arguments) {
   var tab = tabs.get(tabId),
       data = arguments[0]
@@ -89,8 +92,6 @@ bindWebviewIPC('pageData', function (webview, tabId, arguments) {
     bookmarks.updateHistory(tabId, data.extractedText, data.metadata)
   }
 })
-
-// set the permissionRequestHandler for non-private tabs
 
 remote.session.defaultSession.setPermissionRequestHandler(pagePermissionRequestHandler)
 
@@ -141,7 +142,7 @@ function getWebviewDom (options) {
   })
 
   w.addEventListener('did-finish-load', onPageLoad)
-  w.addEventListener('did-navigate-in-page', onPageLoad)
+  w.addEventListener('did-navigate-in-page', onPageLoad) // Editor changes
 
   // open links in new tabs
 
@@ -228,8 +229,6 @@ function getWebviewDom (options) {
   return w
 }
 
-/* options: openInBackground: should the webview be opened without switching to it? default is false. */
-
 function addWebview (tabId) {
   var tabData = tabs.get(tabId)
 
@@ -259,10 +258,7 @@ function switchToWebview (id) {
     wv = addWebview(id)
   }
   var url = wv.src;
-  if (url !== absoluteEditor) {
-    ipcRenderer.send('switchToWebview', url);  //TODO: On switch true?
-  }
-  ipcRenderer.send('checkUrl', url);  //TODO: On switch true?
+  ipcRenderer.send('checkUrl', url);
 
   wv.classList.remove('hidden')
   wv.hidden = false

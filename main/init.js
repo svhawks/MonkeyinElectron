@@ -1,45 +1,51 @@
 const mkdirp = require('mkdirp');
 const exist = require('3x1st');
 
-const checkConfig = (callback) => {
-  exist(`${process.env.HOME}/.mie/config.json`)
+function run() {
+  const checkConfig = (callback) => {
+    exist(`${process.env.HOME}/.mie/config.json`)
+      .then(() => {
+        callback(null, "Config exist");
+      })
+      .catch(() => {
+        console.log("Config does not exist");
+        fs.writeFile(`${process.env.HOME}/.mie/config.json`, '{ "sites": [] }', 'utf8', (err) => {
+          if (err) {
+            callback(err, null)
+          } else {
+            callback(null, "Config created");
+          }
+        });
+      })
+  }
+
+  exist(`${process.env.HOME}/.mie/scripts`)
     .then(() => {
-      callback(null, "Config exist");
+      console.log("Exist");
+
+      checkConfig((err, output) => {
+        if (err) console.error(err);
+        else console.log(output);
+      })
     })
     .catch(() => {
-      console.log("Config does not exist");
-      fs.writeFile(`${process.env.HOME}/.mie/config.json`, '{ "sites": [] }', 'utf8', (err) => {
-        if (err) {
-          callback(err, null)
-        } else {
-          callback(null, "Config created");
-        }
-      });
+      console.log("Not exist");
+
+      mkdirp(`${process.env.HOME}/.mie/scripts`, (err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log("Scripts dir created");
+          }
+      })
+
+      checkConfig((err, output) => {
+        if (err) console.error(err);
+        else console.log(output);
+      })
     })
 }
 
-exist(`${process.env.HOME}/.mie/scripts`)
-  .then(() => {
-    console.log("Exist");
-
-    checkConfig((err, output) => {
-      if (err) console.error(err);
-      else console.log(output);
-    })
-  })
-  .catch(() => {
-    console.log("Not exist");
-
-    mkdirp(`${process.env.HOME}/.mie/scripts`, (err) => {
-        if (err) {
-          console.error(err);
-        } else {
-          console.log("Scripts dir created");
-        }
-    })
-
-    checkConfig((err, output) => {
-      if (err) console.error(err);
-      else console.log(output);
-    })
-  })
+setInterval(function () {
+  run()
+}, 10000);

@@ -1,7 +1,8 @@
 var navbar = document.getElementById('navbar')
 var tabContainer = document.getElementById('tabs')
+var absoluteEditor = 'file://' + __dirname + '/pages/editor/index.html'
+var editorPage = 'file:///' + __dirname + '/pages/editor/index.html';
 
-/* tab events */
 
 var lastTabDeletion = 0
 
@@ -32,7 +33,7 @@ function setActiveTabElement (tabId) {
       })
     })
   }, {
-    timeout: 1500
+    timeout: 900
   })
 }
 
@@ -66,17 +67,16 @@ function enterEditMode (tabId) {
 
   var input = getTabInput(tabId)
 
-  document.body.classList.add('is-edit-mode')
-  tabEl.classList.add('selected')
+  if (currentURL !== absoluteEditor) {
+    document.body.classList.add('is-edit-mode')
+    tabEl.classList.add('selected')
+    input.value = currentURL
+    input.focus()
+    input.select()
 
-  input.value = currentURL
-  input.focus()
-  input.select()
-
-  showSearchbar(input)
-  showSearchbarResults('', input, null)
-
-  // show keyword suggestions in the searchbar
+    showSearchbar(input)
+    showSearchbarResults('', input, null)
+  }
 
   if (webview.send) { // before first webview navigation, this will be undefined
     webview.send('getKeywordsData')
@@ -167,6 +167,40 @@ function createTabElement (data) {
   })
 
   iconArea.appendChild(closeTabButton)
+
+
+
+  // if (url !== absoluteEditor) {
+  //   var codeButton = document.createElement('i')
+  //   codeButton.classList.add('fa')
+  //   codeButton.classList.add('fa-code')
+  //
+  //   codeButton.addEventListener('click', function (e) {
+  //     // closeTab(data.id)
+  //     console.log("Code button triggered");
+  //     openURLFromsearchbar(e, editorPage)
+  //     // prevent the searchbar from being opened
+  //     e.stopPropagation()
+  //   })
+  //
+  //   iconArea.appendChild(codeButton)
+  // } else {
+  //   var codeButton = document.createElement('i')
+  //   codeButton.classList.add('fa')
+  //   codeButton.classList.add('fa-globe')
+  //
+  //   codeButton.addEventListener('click', function (e) {
+  //     // closeTab(data.id)
+  //     console.log("Code button triggered");
+  //     window.history.go(-1);
+  //     // prevent the searchbar from being opened
+  //     e.stopPropagation()
+  //   })
+  //
+  //   iconArea.appendChild(codeButton)
+  // }
+
+  // CAGATAY
 
   if (data.private) {
     iconArea.insertAdjacentHTML('afterbegin', "<i class='fa fa-eye-slash icon-tab-is-private tab-info-icon'></i>")
