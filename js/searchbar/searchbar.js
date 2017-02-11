@@ -19,7 +19,7 @@ function openURLInBackground (url) { // used to open a url in the background, wi
     openInBackground: true,
     leaveEditMode: false
   })
-
+  // TODO @cagatay
   var i = searchbar.querySelector('.searchbar-item:focus')
   if (i) { // remove the highlight from an awesomebar result item, if there is one
     i.blur()

@@ -3,6 +3,17 @@
 document.addEventListener('DOMContentLoaded', runEditor);
 
 function runEditor() {
+  var DEFAULT_TITLE = window.document.title;
+  function setTitle(text, ms) {
+    if (!ms) {
+      ms = 500;
+    }
+    var title = window.document.title;
+    window.document.title = text;
+    setTimeout(function () {
+      window.document.title = DEFAULT_TITLE;
+    }, ms);
+  }
 
   if (window.location.href.indexOf("file://") === 0 && window.location.href.indexOf("pages/editor/index.html")) {
 
@@ -21,13 +32,11 @@ function runEditor() {
     function saveScript(callback) {
       if (isValidJS()) {
         lint()
-        delay(function(){
-          ipc.send('saveScript', editor.getValue());
-          console.log("Saved");
-          callback("Saved!")
-        }, 500 );
+        ipc.send('saveScript', editor.getValue());
+        setTitle("Script saved");
+        callback("Saved!");
       } else {
-        console.log("Isn't saved because js is not correct");
+        setTitle("Isn't saved because js is not correct");
         callback("Isn't saved because js is not correct")
       }
     }
@@ -119,11 +128,23 @@ function runEditor() {
     socket.on('url', function(arg) {
       console.log("There isnt any script yet," + window.location.href);
       if (arg.status) {
-        var code = arg.response.executable.code;
         console.log(arg);
-        if (arg.executable.enabled) {
-          eval(code);
+        if (arg.response.executable.enabled) {
+          var code = arg.response.executable.code;
+          try {
+            setTitle("Script working..", 500)
+            console.clear();
+            eval(code);
+            console.log('%c Your awesome code executed. ', 'background: #222; color: #bada55');
+            console.log(arg.response.executable.code);
+          } catch (e) {
+            console.clear();
+            setTitle("Error occured when script running.", 500)
+            console.log(e);
+          }
         } else {
+          console.clear();
+          setTitle("There is a executable script but does not enabled.", 500);
           console.log("There is a executable script but does not enabled.");
         }
       }

@@ -51,32 +51,7 @@ function onPageLoad (e) {
     })
   }
 
-
   ipcRenderer.send('checkUrl', url);
-
-  // var LAST_MATCH = '';
-  // var mieview = this;
-  // ipcRenderer.on('url', function(event, arg) {
-  //   console.log( arg );
-  //   if (arg.status) {
-  //     var code = arg.response.executable.code;
-  //
-  //     if (arg.response.executable.enabled) {
-  //       if (LAST_MATCH === arg.response.executable.match) {
-  //         ipcRenderer.send('browserLog', 'Same script handled.');
-  //         LAST_MATCH = '';
-  //       } else {
-  //         LAST_MATCH = arg.response.executable.match;
-  //         ipcRenderer.send('browserLog', 'Executable script handled.' + JSON.stringify(arg.response.executable.match))
-  //       }
-  //
-  //       // mieview.executeJavaScript(code, false, function(value) {
-  //       //   console.log("Done!");
-  //       // })
-  //     }
-  //   }
-  // })
-
 
   rerenderTabElement(tab)
 }
