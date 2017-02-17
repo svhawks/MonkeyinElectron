@@ -10,6 +10,15 @@ const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
 let LAST_URL = ''
 
 io.on('connection', (socket) => {
+  ipcMain.on('browserLog', function (event, arg) {
+    console.log(arg);
+  })
+  ipcMain.on('evalError', function(event, arg) {
+    console.log("eval korumalı site:");
+    console.log(arg);
+    console.log("Electron içerisine tekrar data bind ediliyor.");
+    event.sender.send('url', {status:true, response:arg});
+  })
   ipcMain.on('checkUrl', (event, url) => {
       async.waterfall([
      (callback) => {

@@ -26,12 +26,11 @@ function runEditor() {
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true,
-        enableLiveAutocompletion: false
+        enableLiveAutocompletion: true
     });
 
     function saveScript(callback) {
       if (isValidJS()) {
-        lint()
         ipc.send('saveScript', editor.getValue());
         setTitle("Script saved");
         callback("Saved!");
@@ -66,6 +65,7 @@ function runEditor() {
         name: 'save',
         bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
         exec: function(editor) {
+            lint()
             saveScript(function(res) {
               console.log(res);
             })
@@ -130,9 +130,9 @@ function runEditor() {
       if (arg.status) {
         console.log(arg);
         if (arg.response.executable.enabled) {
+          // setTitle("Script working..", 500)
           var code = arg.response.executable.code;
           try {
-            setTitle("Script working..", 500)
             console.clear();
             eval(code);
             console.log('%c Your awesome code executed. ', 'background: #222; color: #bada55');
@@ -140,6 +140,7 @@ function runEditor() {
           } catch (e) {
             console.clear();
             setTitle("Error occured when script running.", 500)
+            ipc.send('evalError', arg);
             console.log(e);
           }
         } else {
