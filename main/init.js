@@ -46,6 +46,15 @@ function run() {
     })
 }
 
-setInterval(function () {
-  run()
-}, 10000);
+function inter(val) {
+  return new Promise((resolve, reject) => {
+    setTimeout(function () {
+      console.log("Checking your config..");
+      inter(val * 2);
+      run();
+      resolve();
+    }, val);
+  });
+}
+
+inter(10000)
