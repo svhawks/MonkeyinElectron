@@ -1,5 +1,4 @@
-const mkdirp = require('mkdirp');
-const exist = require('3x1st');
+
 
 function run() {
   const checkConfig = (callback) => {

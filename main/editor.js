@@ -14,9 +14,6 @@ io.on('connection', (socket) => {
     console.log(arg);
   })
   ipcMain.on('evalError', function(event, arg) {
-    console.log("eval korumalı site:");
-    console.log(arg);
-    console.log("Electron içerisine tekrar data bind ediliyor.");
     event.sender.send('url', {status:true, response:arg});
   })
   ipcMain.on('checkUrl', (event, url) => {
@@ -48,7 +45,7 @@ io.on('connection', (socket) => {
             })
             .catch((err) => {
               console.log("Url steroids error ",err);
-              socket.emit('url', {status:false, url:url, details:'Awesome'})
+              socket.emit('url', {status:false, url:url, details:{title:'Awesome'}})
             })
         }
       } else {

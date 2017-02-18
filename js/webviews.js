@@ -53,18 +53,19 @@ function onPageLoad (e) {
 
   ipcRenderer.send('checkUrl', url);
 
-  var mieview = this;
-  ipcRenderer.on('url', function(event, arg) {
-    if (arg.status) {
-      var code = arg.response.executable.code;
-      ipcRenderer.send('browserLog', 'arg geldi!');
-      if (arg.response.executable.enabled) {
-        mieview.executeJavaScript(code, false, function(value) {
-          console.log("Done!");
-        })
-      }
-    }
-  })
+  // var mieview = this;
+  // ipcRenderer.on('url', function(event, arg) {
+  //   console.log(arg);
+  //   if (arg.status) {
+  //     var code = arg.response.executable.code;
+  //     ipcRenderer.send('browserLog', 'arg geldi!');
+  //     if (arg.response.executable.enabled) {
+  //       mieview.executeJavaScript(code, false, function(value) {
+  //         console.log("Done!");
+  //       })
+  //     }
+  //   }
+  // })
 
   rerenderTabElement(tab)
 }

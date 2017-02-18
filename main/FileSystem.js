@@ -4,7 +4,10 @@ var bugsnag = require("bugsnag");
 bugsnag.register("23bbc0b43951a81209436f177df8f52f");
 var PATH = `${process.env["HOME"]}/.mie/config.json`;
 const notifier = require('node-notifier');
+const mkdirp = require('mkdirp');
+const exist = require('3x1st');
 // const urlSteroids = require('url-steroids');
+run();
 function insert(obj) {
   return new Promise((resolve, reject) => {
     fs.readFile(PATH, 'utf8', (err, data) => {

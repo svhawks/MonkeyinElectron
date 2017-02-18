@@ -139,7 +139,7 @@ module.exports = function (grunt) {
 			},
 			linuxBuild: {
 				options: {
-					name: 'min',
+					name: 'mie',
 					dir: __dirname,
 					out: 'dist/app',
 					version: electronVersion,
@@ -184,14 +184,14 @@ module.exports = function (grunt) {
 				options: {
 					arch: 'i386'
 				},
-				src: 'dist/app/Mie-linux-ia32',
+				src: 'dist/app/mie-linux-ia32',
 				dest: 'dist/app/linux'
 			},
 			linux64: {
 				options: {
 					arch: 'amd64'
 				},
-				src: 'dist/app/Mie-linux-x64',
+				src: 'dist/app/mie-linux-x64',
 				dest: 'dist/app/linux'
 			}
 		}
