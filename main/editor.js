@@ -86,7 +86,6 @@ io.on('connection', (socket) => {
             })
         })
     })
-
 })
 
 try {

@@ -3,6 +3,7 @@ var trackerCheckbox = document.getElementById("checkbox-block-trackers");
 var banner = document.getElementById("restart-required-banner");
 var darkModeCheckbox = document.getElementById("checkbox-dark-mode");
 var autoSaveCheckbox = document.getElementById("checkbox-auto-save");
+var autoLintCheckbox = document.getElementById("checkbox-auto-lint");
 
 function showRestartRequiredBanner() {
 	banner.hidden = false;
@@ -159,6 +160,16 @@ settings.get('autoSave', function (value) {
 
 autoSaveCheckbox.addEventListener("change", function (e) {
 	settings.set("autoSave", this.checked)
+		showRestartRequiredBanner()
+});
+
+settings.get('autoLintWhenSave', function (value) {
+	autoLintCheckbox.checked = value;
+});
+
+autoLintCheckbox.addEventListener("change", function (e) {
+	settings.set("autoLintWhenSave", this.checked)
+	showRestartRequiredBanner()
 });
 
 

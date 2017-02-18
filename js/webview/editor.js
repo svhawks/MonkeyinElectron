@@ -80,7 +80,7 @@ function runEditor() {
                saveScript(function(res) {
                  console.log(res);
                })
-             }, 2000 );
+             }, 5000 );
            }
          });
       } else {
@@ -96,7 +96,7 @@ function runEditor() {
 
     function isValidJS() {
        try {
-           eval("throw 0;" + editor.getValue());
+           eval("throw 0;" + editor.getSession().getValue());
        } catch(e) {
            if (e === 0)
                return true;
@@ -105,13 +105,17 @@ function runEditor() {
     }
 
     function lint() {
-      console.log("Lint your code");
-      var val = editor.getValue();
-      var array = val.split(/\n/);
-      array[0] = array[0].trim();
-      val = array.join("\n");
-      val = js_beautify(val);
-      editor.setValue(val);
+      settings.get('autoLintWhenSave', function (isAutoLintWhenSave) {
+        if (isAutoLintWhenSave) {
+          console.log("Lint your code");
+          var val = editor.getValue();
+          var array = val.split(/\n/);
+          array[0] = array[0].trim();
+          val = array.join("\n");
+          val = js_beautify(val);
+          editor.setValue(val);
+        }
+      });
     }
 
     socket.on('url', function(arg) {
