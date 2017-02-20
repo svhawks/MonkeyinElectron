@@ -16,7 +16,7 @@ function insert(obj) {
             data = JSON.parse(data);
             console.log(data);
             data.sites.forEach((site, key) => {
-              if (site.name === obj.name) {
+              if (site.name === obj.name || site.match === obj.match) {
                 const bothEnabled = site.enabled && obj.enabled;
                 const bothDisabled = !site.enabled && !obj.enabled;
                 if (!bothEnabled || !bothDisabled) {

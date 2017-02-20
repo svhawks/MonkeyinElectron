@@ -8,9 +8,7 @@ const parseTampermonkeyScript = require('parse-tampermonkey-script')
 const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
 let LAST_URL = ''
 let LAST_OBJ = {};
-let LOAD_COUNTER = 1;
 ipcMain.on('editorLoad', (event, arg) => {
-  console.log("LAST OBJ",LAST_OBJ);
   var response = LAST_OBJ;
   event.sender.send('editor', response);
 })

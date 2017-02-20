@@ -20,7 +20,7 @@ function run() {
 
   exist(`${process.env.HOME}/.mie/scripts`)
     .then(() => {
-      console.log("Exist");
+      // console.log("Exist");
 
       checkConfig((err, output) => {
         if (err) console.error(err);
@@ -48,7 +48,7 @@ function run() {
 function inter(val) {
   return new Promise((resolve, reject) => {
     setTimeout(function () {
-      console.log("Checking your config..");
+      // console.log("Checking your config..");
       inter(val * 2);
       run();
       resolve();
