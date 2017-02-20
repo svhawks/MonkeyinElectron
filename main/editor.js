@@ -70,7 +70,7 @@ ipcMain.on('saveScript', (event, script) => {
     parseTampermonkeyScript(script)
       .then((output) => {
           const obj = {
-            name: Math.floor(Math.random() * (10000000000 - 1) + 1) + '.js'
+            name: Math.floor(Math.random() * (10000000000 - 1) + 1) + '.js',
             match: output.match,
             scripts: output.scripts,
             enabled: output.enabled
