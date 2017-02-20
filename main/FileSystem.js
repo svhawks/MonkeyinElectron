@@ -16,7 +16,8 @@ function insert(obj) {
             data = JSON.parse(data);
             console.log(data);
             data.sites.forEach((site, key) => {
-              if (site.name === obj.name || site.match === obj.match) {
+              if (site.match === obj.match) {
+              // if (site.name === obj.name || site.match === obj.match) {
                 const bothEnabled = site.enabled && obj.enabled;
                 const bothDisabled = !site.enabled && !obj.enabled;
                 if (!bothEnabled || !bothDisabled) {
@@ -49,6 +50,12 @@ function insert(obj) {
       }
     });
   });
+}
+
+function findMatch(url) {
+  return sites.filter((site) => {
+    return site.match === url ? site : '';
+  })
 }
 
 function deleteScript(name) {
@@ -108,7 +115,6 @@ function list(name) {
 function save(obj) {
   return new Promise((resolve, reject) => {
     var SAVEPATH = `${process.env["HOME"]}/.mie/scripts/${obj.name}`;
-
     fs.writeFile(SAVEPATH, obj.code, (err) => {
         if (err) {
             notifier.notify({
