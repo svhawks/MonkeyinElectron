@@ -2,8 +2,7 @@ const ipcMain = electron.ipcMain
 const slug = require('slug')
 const URL = require('url-parse')
 const urlSteroids = require('url-steroids');
-const io = require('socket.io')()
-io.on('connection', client => {})
+
 const parseTampermonkeyScript = require('parse-tampermonkey-script')
 
 const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
@@ -102,13 +101,3 @@ ipcMain.on('saveScript', (event, script) => {
           })
       })
   })
-
-try {
-  io.listen(40000)
-} catch (e) {
-  console.log(e)
-}
-
-process.on('uncaughtException', (err) => {
-  console.log(err)
-})
