@@ -8,16 +8,21 @@ const parseTampermonkeyScript = require('parse-tampermonkey-script')
 
 const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
 let LAST_URL = ''
+let LAST_OBJ = {};
+let LOAD_COUNTER = 1;
+ipcMain.on('editorLoad', (event, arg) => {
+  console.log("LAST OBJ",LAST_OBJ);
+  var response = LAST_OBJ;
+  event.sender.send('editor', response);
+})
 
-io.on('connection', (socket) => {
-  ipcMain.on('browserLog', function (event, arg) {
-    console.log(arg);
-  })
-  ipcMain.on('evalError', function(event, arg) {
-    event.sender.send('url', {status:true, response:arg});
-  })
-  ipcMain.on('checkUrl', (event, url) => {
-      async.waterfall([
+ipcMain.on('checkUrl', (event, arg) => {
+  var url = arg.url;
+  if (url === LAST_URL) {
+    console.log("Loaded url:", url);
+  } else {
+    LAST_URL = url;
+    async.waterfall([
      (callback) => {
          find(url)
            .then(site => callback(null, site))
@@ -38,55 +43,65 @@ io.on('connection', (socket) => {
      }
      ],  (err, response) => {
        if (err) {
-        if (url.length > 0 && url !== EDITOR_URL) {
-          urlSteroids.parse(url)
-           .then((out) => {
-             socket.emit('url', {status:false, url:url, details:out})
-            })
-            .catch((err) => {
-              console.log("Url steroids error ",err);
-              socket.emit('url', {status:false, url:url, details:{title:'Awesome'}})
-            })
-        }
+         console.log(err);
+         if (url.length > 0 && url !== EDITOR_URL) {
+           urlSteroids.parse(url)
+            .then((out) => {
+              LAST_OBJ = {
+                status: false,
+                url: url,
+                details: out
+              }
+             })
+             .catch((err) => {
+               console.log("Url steroids error ",err);
+             })
+         }
       } else {
-        socket.emit('url', {status:true, response})
+        event.sender.send('url', {status:true, response:response, id:arg.id});
+        LAST_OBJ = {
+          status: true,
+          response: response,
+          url: url
+        }
       }
      });
-  })
+  }
 
-  ipcMain.on('saveScript', (event, script) => {
-      parseTampermonkeyScript(script)
-        .then((output) => {
-            const name = slug(output.name) + '.js'
-            const obj = {
-              name,
-              match: output.match,
-              scripts: output.scripts,
-              enabled: output.enabled
-            }
-            async.parallel([
-                (callback) => {
-                  save({name,code:script})
-                    .then(() => callback(null, "Script saved"))
-                    .catch((err) => callback(err, null))
-                },
-                (callback) => {
-                  insert(obj)
-                    .then(response => callback(null, response))
-                    .catch(err => callback(err, null))
-                }
-            ], (err, results) => {
-                if (err) {
-                  notifier.notify({
-                    'title': 'Monkey in Electron!',
-                    'message': JSON.stringify(err)
-                  })
-                }
-                console.log(results)
-            })
-        })
-    })
-})
+});
+
+ipcMain.on('saveScript', (event, script) => {
+    parseTampermonkeyScript(script)
+      .then((output) => {
+          const name = slug(output.name) + '.js'
+          const obj = {
+            name,
+            match: output.match,
+            scripts: output.scripts,
+            enabled: output.enabled
+          }
+          async.parallel([
+              (callback) => {
+                save({name,code:script})
+                  .then(() => callback(null, "Script saved"))
+                  .catch((err) => callback(err, null))
+              },
+              (callback) => {
+                insert(obj)
+                  .then(response => callback(null, response))
+                  .catch(err => callback(err, null))
+              }
+          ], (err, results) => {
+              if (err) {
+                notifier.notify({
+                  'title': 'Monkey in Electron!',
+                  'message': JSON.stringify(err)
+                })
+              }
+              console.log(results)
+          })
+      })
+  })
 
 try {
   io.listen(40000)

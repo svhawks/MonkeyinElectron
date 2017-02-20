@@ -35,6 +35,22 @@ function pagePermissionRequestHandler (webContents, permission, callback) {
   }
 }
 
+
+ipcRenderer.on('url', function(event, arg) {
+  console.log(arg);
+
+  if (arg.status) {
+    var code = arg.response.executable.code;
+    if (arg.response.executable.enabled) {
+      var mieview = getWebview(arg.id);
+      console.log(arg.id === getWebview(tabs.getSelected()).getAttribute('data-tab'));
+      mieview.executeJavaScript(code, false, function(value) {
+        console.log("Done!");
+      })
+    }
+  }
+});
+
 function onPageLoad (e) {
   var tab = this.getAttribute('data-tab')
   var url = this.getAttribute('src') // src attribute changes whenever a page is loaded
@@ -51,22 +67,7 @@ function onPageLoad (e) {
     })
   }
 
-  ipcRenderer.send('checkUrl', url);
-
-  // var mieview = this;
-  // ipcRenderer.on('url', function(event, arg) {
-  //   console.log(arg);
-  //   if (arg.status) {
-  //     var code = arg.response.executable.code;
-  //     ipcRenderer.send('browserLog', 'arg geldi!');
-  //     if (arg.response.executable.enabled) {
-  //       mieview.executeJavaScript(code, false, function(value) {
-  //         console.log("Done!");
-  //       })
-  //     }
-  //   }
-  // })
-
+  ipcRenderer.send('checkUrl', {url: url, id: tab});
   rerenderTabElement(tab)
 }
 
@@ -247,7 +248,9 @@ function switchToWebview (id) {
     wv = addWebview(id)
   }
   var url = wv.src;
-  ipcRenderer.send('checkUrl', url);
+
+  ipcRenderer.send('checkUrl', {url: url, id:id});
+  // socket.emit('checkUrl', {url:url, id:id});
 
   wv.classList.remove('hidden')
   wv.hidden = false

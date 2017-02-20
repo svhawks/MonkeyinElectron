@@ -3,6 +3,9 @@
 document.addEventListener('DOMContentLoaded', runEditor);
 
 function runEditor() {
+
+  ipc.send('editorLoad', 'editör yüklendi');
+
   var DEFAULT_TITLE = window.document.title;
   function setTitle(text, ms) {
     if (!ms) {
@@ -40,16 +43,16 @@ function runEditor() {
       }
     }
 
-    // editor.commands.addCommand({
-    //     name: "showKeyboardShortcuts",
-    //     bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
-    //     exec: function(editor) {
-    //         ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-    //             module.init(editor);
-    //             // editor.showKeyboardShortcuts() // For show first.
-    //         })
-    //     }
-    // })
+    editor.commands.addCommand({
+        name: "showKeyboardShortcuts",
+        bindKey: {win: "Ctrl-Alt-h", mac: "Command-Alt-h"},
+        exec: function(editor) {
+            ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+                module.init(editor);
+                // editor.showKeyboardShortcuts() // For show first.
+            })
+        }
+    })
 
     editor.execCommand("showKeyboardShortcuts");
 
@@ -118,8 +121,7 @@ function runEditor() {
       });
     }
 
-    socket.on('url', function(arg) {
-      console.log(arg);
+    ipc.on('editor', function(event, arg) {
       if (arg.status) {
         editor.setValue(arg.response.script.trim())
       } else {
@@ -127,32 +129,6 @@ function runEditor() {
         var defaultCode = ["// ==UserScript==", "// @name         " + arg.details.title + ' Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
         defaultCode = defaultCode.join("\n");
         editor.setValue(defaultCode);
-      }
-    })
-  } else {
-    socket.on('url', function(arg) {
-      // console.log("There isnt any script yet," + window.location.href);
-      if (arg.status) {
-        console.log(arg);
-        if (arg.response.executable.enabled) {
-          // setTitle("Script working..", 500)
-          var code = arg.response.executable.code;
-          try {
-            // console.clear();
-            eval(code);
-            console.log('%c Your awesome code executed. ', 'background: #222; color: #bada55');
-            console.log(arg.response.executable.code);
-          } catch (e) {
-            // console.clear();
-            ipc.send('evalError', arg);
-            ipc.send('browserLog', e);
-            console.log(e);
-          }
-        } else {
-          // console.clear();
-          setTitle("There is a executable script but does not enabled.", 5000);
-          console.log("There is a executable script but does not enabled.");
-        }
       }
     })
   }
