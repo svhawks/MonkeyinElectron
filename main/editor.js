@@ -8,6 +8,7 @@ const parseTampermonkeyScript = require('parse-tampermonkey-script')
 const EDITOR_URL = 'file://' + __dirname + '/pages/editor/index.html'
 let LAST_URL = ''
 let LAST_OBJ = {};
+
 ipcMain.on('editorLoad', (event, arg) => {
   var response = LAST_OBJ;
   event.sender.send('editor', response);
@@ -15,9 +16,9 @@ ipcMain.on('editorLoad', (event, arg) => {
 
 ipcMain.on('checkUrl', (event, arg) => {
   var url = arg.url;
-  if (url === LAST_URL) {
-    console.log("Loaded url:", url);
-  } else {
+  // if (url === LAST_URL) {
+  //   console.log("Loaded url:", url);
+  // } else {
     LAST_URL = url;
     async.waterfall([
      (callback) => {
@@ -63,14 +64,15 @@ ipcMain.on('checkUrl', (event, arg) => {
         }
       }
      });
-  }
+  // }
 });
 
 ipcMain.on('saveScript', (event, script) => {
     parseTampermonkeyScript(script)
       .then((output) => {
+          var name = Math.floor(Math.random() * (10000000000 - 1) + 1) + '.js';
           const obj = {
-            name: Math.floor(Math.random() * (10000000000 - 1) + 1) + '.js',
+            name,
             match: output.match,
             scripts: output.scripts,
             enabled: output.enabled
@@ -88,12 +90,14 @@ ipcMain.on('saveScript', (event, script) => {
               }
           ], (err, results) => {
               if (err) {
+                console.log(err);
                 notifier.notify({
                   'title': 'Monkey in Electron!',
                   'message': JSON.stringify(err)
                 })
+              } else {
+                console.log(results);
               }
-              console.log(results)
           })
       })
   })

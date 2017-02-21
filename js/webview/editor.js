@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', runEditor);
 
 function runEditor() {
 
-  ipc.send('editorLoad', 'editör yüklendi');
+  ipc.send('editorLoad', window.location.href);
 
   var DEFAULT_TITLE = window.document.title;
   function setTitle(text, ms) {

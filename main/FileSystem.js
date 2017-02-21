@@ -52,11 +52,11 @@ function insert(obj) {
   });
 }
 
-function findMatch(url) {
-  return sites.filter((site) => {
-    return site.match === url ? site : '';
-  })
-}
+// function findMatch(url) {
+//   return sites.filter((site) => {
+//     return site.match === url ? site : '';
+//   })
+// }
 
 function deleteScript(name) {
   return new Promise((resolve, reject) => {
