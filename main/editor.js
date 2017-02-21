@@ -16,9 +16,6 @@ ipcMain.on('editorLoad', (event, arg) => {
 
 ipcMain.on('checkUrl', (event, arg) => {
   var url = arg.url;
-  // if (url === LAST_URL) {
-  //   console.log("Loaded url:", url);
-  // } else {
     LAST_URL = url;
     async.waterfall([
      (callback) => {
@@ -63,8 +60,7 @@ ipcMain.on('checkUrl', (event, arg) => {
           url: url
         }
       }
-     });
-  // }
+    });
 });
 
 ipcMain.on('saveScript', (event, script) => {
