@@ -49,7 +49,7 @@ function runEditor() {
         exec: function(editor) {
             ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
                 module.init(editor);
-                // editor.showKeyboardShortcuts() // For show first.
+                editor.showKeyboardShortcuts() // For show first.
             })
         }
     })
@@ -123,10 +123,12 @@ function runEditor() {
 
     ipc.on('editor', function(event, arg) {
       if (arg.status) {
-        editor.setValue(arg.response.script.trim())
+        editor.setValue(arg.response.origin.trim())
       } else {
         // alert(arg)
-        var defaultCode = ["// ==UserScript==", "// @name         " + arg.details.title + ' Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
+        // 'webview[data-tab="{id}"]'.replace('{id}', id)
+        var defaultCode = ["// ==UserScript==", "// @name         {title} Script".replace('{title}', arg.details.title), "// @match        {url}".replace('{url}', arg.url), "// @enabled      true", "// ==/UserScript==", "", "(function mie() {", "    alert('Mie is working well!')", "})();"];
+        // var defaultCode = ["// ==UserScript==", "// @name         " + arg.details.title + " Script', "// @version      1.0.0", '// @description  try to take over the world!', '// @match        ' + arg.url, '// @enabled      true', '// ==/UserScript==', '', '(function mie() {', '    alert("Mie is working well!")', '})();']
         defaultCode = defaultCode.join("\n");
         editor.setValue(defaultCode);
       }

@@ -23,29 +23,17 @@ ipcMain.on('checkUrl', (event, arg) => {
            .then(site => callback(null, site))
            .catch(err => callback(err, null))
      },
-     (site, callback) => {
-         readOrigin(site.name).then(script => callback(null, script))
-     },
-     (originalScript, callback) => {
-         parseTampermonkeyScript(originalScript)
-           .then(executable => {
-             const response = {
-               script: originalScript,
-               executable
-             }
-             callback(null, response);
-         })
-     }
      ],  (err, response) => {
        if (err) {
-         console.log(err);
+        //  console.log(err);
          if (url.length > 0 && url !== EDITOR_URL) {
            urlSteroids.parse(url)
             .then((out) => {
               LAST_OBJ = {
                 status: false,
                 url: url,
-                details: out
+                details: out,
+                id: arg.id
               }
              })
              .catch((err) => {
@@ -57,7 +45,8 @@ ipcMain.on('checkUrl', (event, arg) => {
         LAST_OBJ = {
           status: true,
           response: response,
-          url: url
+          url: url,
+          id: arg.id
         }
       }
     });
@@ -67,13 +56,9 @@ ipcMain.on('saveScript', (event, script) => {
     parseTampermonkeyScript(script)
       .then((output) => {
           var name = Math.floor(Math.random() * (10000000000 - 1) + 1) + '.js';
-          const obj = {
-            name,
-            match: output.match,
-            scripts: output.scripts,
-            enabled: output.enabled
-          }
-          async.parallel([
+          output.name = name;
+          var obj = output
+          async.parallel([ // TODO REMOVE SCRIPTS PUBLISH SCRIPT BUTTON.
               (callback) => {
                 save({name,code:script})
                   .then(() => callback(null, "Script saved"))

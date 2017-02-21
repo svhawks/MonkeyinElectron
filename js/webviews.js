@@ -40,8 +40,8 @@ ipcRenderer.on('url', function(event, arg) {
   console.log(arg);
 
   if (arg.status) {
-    var code = arg.response.executable.code;
-    if (arg.response.executable.enabled) {
+    var code = arg.response.code;
+    if (arg.response.enabled) {
       var mieview = getWebview(arg.id);
       console.log(arg.id === getWebview(tabs.getSelected()).getAttribute('data-tab'));
       mieview.executeJavaScript(code, false, function(value) {
